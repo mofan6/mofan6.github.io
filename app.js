@@ -1,6 +1,25 @@
 "use strict";
 
 const english = {
+  storyChoose: "Choose a little of your everyday",
+  storyWeekend: "Weekend escape",
+  storyLin: "Lin",
+  storyMessage1: "The sunset looks even better in your photos.",
+  storyMessage2: "Let's keep these little everyday moments.",
+  storySelected: "2 conversations selected",
+  storyArchive: "Create archive",
+  storyProcessing: "Gathering your memories",
+  storyLocal: "On your device · HTML archive",
+  storyRead: "Reading conversations",
+  storyMedia: "Collecting photos and voice",
+  storyBuild: "Building offline archive",
+  storyReady: "Kept safe. Ready to revisit.",
+  storyExportOptions: "Archive options",
+  storyFormats: "Seven formats. Yours to choose.",
+  storyCollection: "Lin's Moments",
+  storyFriends: "Chen, Mia, River, Yu",
+  storyFavorites: "Favorites",
+  storyKeep: "Keep the little things you love.",
   skip: "Skip to content",
   navFeatures: "Features",
   navStart: "Get started",
@@ -583,9 +602,56 @@ function setDemoTheme(theme) {
   toggle.innerHTML = icon(theme === "dark" ? "sun" : "moon");
   savePreference("moect-demo-theme", theme);
 }
-document.querySelector("#demo-theme-toggle").addEventListener("click", () => {
-  setDemoTheme(state.demoTheme === "dark" ? "light" : "dark");
-});
+let themeTransitionRunning = false;
+document
+  .querySelector("#demo-theme-toggle")
+  .addEventListener("click", (event) => {
+    if (themeTransitionRunning) return;
+    const theme = state.demoTheme === "dark" ? "light" : "dark";
+    if (
+      !document.startViewTransition ||
+      reducedMotion.matches ||
+      state.motionPaused
+    ) {
+      setDemoTheme(theme);
+      return;
+    }
+    themeTransitionRunning = true;
+    appWindow.classList.add("theme-revealing");
+    const bounds = appWindow.getBoundingClientRect();
+    const button = event.currentTarget.getBoundingClientRect();
+    const x = button.left + button.width / 2 - bounds.left;
+    const y = button.top + button.height / 2 - bounds.top;
+    const radius = Math.hypot(
+      Math.max(x, bounds.width - x),
+      Math.max(y, bounds.height - y),
+    );
+    const transition = document.startViewTransition(() => setDemoTheme(theme));
+    transition.ready
+      .then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${radius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: 1080,
+            easing: "cubic-bezier(.65,0,.35,1)",
+            pseudoElement: "::view-transition-new(moect-app)",
+            fill: "both",
+          },
+        );
+      })
+      .catch(() => setDemoTheme(theme));
+    transition.finished
+      .catch(() => {})
+      .finally(() => {
+        themeTransitionRunning = false;
+        appWindow.classList.remove("theme-revealing");
+      });
+  });
 
 const accentNamesEnglish = [
   "Wisteria",

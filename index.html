@@ -23,8 +23,16 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://mofan6.github.io/" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
+    <link
+      rel="preload"
+      href="assets/dm-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css?v=20261107-2" />
+    <script src="app.js?v=20261107-2" defer></script>
+    <script src="visuals.js?v=20261107-2" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">跳至主要内容</a>
@@ -167,10 +175,7 @@
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-atmosphere" aria-hidden="true">
-          <div class="aurora aurora-one"></div>
-          <div class="aurora aurora-two"></div>
-          <div class="aurora aurora-three"></div>
-          <div class="atmosphere-grain"></div>
+          <canvas id="fluid-field"></canvas>
         </div>
         <div class="hero-copy container">
           <a
@@ -395,38 +400,118 @@
               </p>
             </div>
             <div class="feature-art archive-art" aria-hidden="true">
-              <div class="mini-archive">
-                <div class="mini-window-top">
-                  <i></i><i></i><i></i><span>weekend.html</span
-                  ><svg class="icon"><use href="#i-shield" /></svg>
+              <div class="archive-story">
+                <div class="story-scene archive-selection">
+                  <div class="story-chrome">
+                    <img
+                      src="assets/icon.svg"
+                      width="16"
+                      height="16"
+                      alt=""
+                    /><span data-i18n="storyChoose">选择想留下的日常</span
+                    ><span class="chrome-dots">···</span>
+                  </div>
+                  <div class="selection-row">
+                    <span class="story-checkbox"
+                      ><svg class="icon"><use href="#i-check" /></svg></span
+                    ><span class="avatar">周</span>
+                    <div>
+                      <strong data-i18n="storyWeekend">周末出走计划</strong
+                      ><small data-i18n="storyMessage1"
+                        >照片收到了，这次的日落真的很美。</small
+                      >
+                    </div>
+                    <span class="selection-count">128</span>
+                  </div>
+                  <div class="selection-row">
+                    <span class="story-checkbox"
+                      ><svg class="icon"><use href="#i-check" /></svg></span
+                    ><span class="avatar">林</span>
+                    <div>
+                      <strong data-i18n="storyLin">林间</strong
+                      ><small data-i18n="storyMessage2"
+                        >把这些小小的日常，好好留下来。</small
+                      >
+                    </div>
+                    <span class="selection-count">64</span>
+                  </div>
+                  <div class="selection-bottom">
+                    <span data-i18n="storySelected">已选择 2 个会话</span
+                    ><span class="story-action"
+                      ><span data-i18n="storyArchive">开始归档</span
+                      ><svg class="icon"><use href="#i-arrow" /></svg
+                    ></span>
+                  </div>
+                  <span class="demo-cursor selection-cursor"
+                    ><svg viewBox="0 0 20 24">
+                      <path d="M2 2 17 13l-7 1-3 7Z" /></svg
+                    ><i></i
+                  ></span>
                 </div>
-                <div class="archive-date">2026 / 10 / 30</div>
-                <div class="mini-message">
-                  <span class="avatar">林</span>
-                  <div>
-                    <small>林间</small
+                <div class="story-scene archive-processing">
+                  <div class="story-chrome">
+                    <svg class="icon"><use href="#i-download" /></svg
+                    ><span data-i18n="storyProcessing">正在整理你的回忆</span
+                    ><span class="chrome-dots">···</span>
+                  </div>
+                  <div class="process-heading">
+                    <span class="process-orbit"></span>
+                    <div>
+                      <strong>memories.html</strong
+                      ><small data-i18n="storyLocal"
+                        >在本机处理 · HTML 归档</small
+                      >
+                    </div>
+                  </div>
+                  <div class="process-row process-row-one">
+                    <svg class="icon"><use href="#i-check" /></svg
+                    ><span data-i18n="storyRead">读取会话记录</span
+                    ><code>192 / 192</code>
+                  </div>
+                  <div class="process-row process-row-two">
+                    <svg class="icon"><use href="#i-check" /></svg
+                    ><span data-i18n="storyMedia">整理图片与语音</span
+                    ><code>24 / 24</code>
+                  </div>
+                  <div class="process-row process-row-three">
+                    <svg class="icon"><use href="#i-check" /></svg
+                    ><span data-i18n="storyBuild">生成离线归档</span
+                    ><code>HTML</code>
+                  </div>
+                  <div class="story-progress"><span></span></div>
+                </div>
+                <div class="story-scene archive-result">
+                  <div class="story-chrome">
+                    <span class="browser-lights"><i></i><i></i><i></i></span
+                    ><span class="story-address"
+                      ><svg class="icon"><use href="#i-shield" /></svg
+                      >memories.html</span
+                    ><svg class="icon"><use href="#i-search" /></svg>
+                  </div>
+                  <div class="result-date">2026 / 10 / 30</div>
+                  <div class="result-message">
+                    <span class="avatar">林</span
                     ><span data-i18n="chat1">周末去山里走走吧，天气正好。</span>
                   </div>
-                </div>
-                <div class="mini-message outgoing">
-                  <div>
+                  <div class="result-message is-me">
                     <span data-i18n="chat2">好呀，带上相机和热咖啡。</span>
                   </div>
-                </div>
-                <div class="mini-message photo-message">
-                  <span class="avatar">林</span
-                  ><img
-                    src="assets/weekend.svg"
-                    width="230"
-                    height="130"
-                    alt=""
-                    loading="lazy"
-                  />
-                </div>
-                <div class="archive-search">
-                  <svg class="icon"><use href="#i-search" /></svg
-                  ><span data-i18n="searchMemory">找回某个瞬间</span
-                  ><kbd>⌘ K</kbd>
+                  <div class="result-message result-photo">
+                    <span class="avatar">林</span
+                    ><img
+                      src="assets/weekend.svg"
+                      width="186"
+                      height="103"
+                      alt=""
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="result-success">
+                    <svg class="icon"><use href="#i-check" /></svg
+                    ><span data-i18n="storyReady"
+                      >回忆已存好，随时再打开。</span
+                    >
+                  </div>
                 </div>
               </div>
             </div>
@@ -447,31 +532,121 @@
               </p>
             </div>
             <div class="feature-art formats-art" aria-hidden="true">
-              <div class="format-orbit">
-                <div class="floating-file file-json">
-                  <div class="file-type json-type">{ }</div>
-                  <span>messages.json</span><small>Structured data</small>
-                  <div class="code-line"></div>
-                  <div class="code-line short"></div>
-                  <div class="code-line"></div>
-                </div>
-                <div class="floating-file file-excel">
-                  <div class="file-type excel-type">X</div>
-                  <span>messages.xlsx</span><small>Spreadsheet</small>
-                  <div class="sheet-grid"></div>
-                </div>
-                <div class="floating-file file-html">
-                  <div class="file-type html-type">&lt;/&gt;</div>
-                  <span>memories.html</span><small>Ready to revisit</small>
-                  <div class="html-preview">
-                    <i></i><span></span><i></i><span></span>
+              <div class="deliverables-preview">
+                <div class="file-stream">
+                  <div class="file-stream-track">
+                    <div class="stream-file">
+                      <span class="stream-icon type-html">HTML</span
+                      ><span
+                        ><strong>memories.html</strong
+                        ><small>Offline archive</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-excel">X</span
+                      ><span
+                        ><strong>messages.xlsx</strong
+                        ><small>Excel spreadsheet</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-json">{ }</span
+                      ><span
+                        ><strong>messages.json</strong
+                        ><small>Structured data</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-markdown">MD</span
+                      ><span
+                        ><strong>memories.md</strong
+                        ><small>Markdown</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-text">TXT</span
+                      ><span
+                        ><strong>messages.txt</strong
+                        ><small>Plain text</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-csv">CSV</span
+                      ><span
+                        ><strong>messages.csv</strong
+                        ><small>Spreadsheet data</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-json">{ }</span
+                      ><span
+                        ><strong>messages.jsonl</strong
+                        ><small>JSON Lines</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-html">HTML</span
+                      ><span
+                        ><strong>memories.html</strong
+                        ><small>Offline archive</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-excel">X</span
+                      ><span
+                        ><strong>messages.xlsx</strong
+                        ><small>Excel spreadsheet</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-json">{ }</span
+                      ><span
+                        ><strong>messages.json</strong
+                        ><small>Structured data</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
+                    <div class="stream-file">
+                      <span class="stream-icon type-markdown">MD</span
+                      ><span
+                        ><strong>memories.md</strong
+                        ><small>Markdown</small></span
+                      ><svg class="icon"><use href="#i-check" /></svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="format-pills">
-                <span>HTML</span><span>JSON</span><span>JSONL</span
-                ><span>TXT</span><span>CSV</span><span>MD</span
-                ><span>XLSX</span>
+                <div class="export-inspector">
+                  <div class="inspector-heading">
+                    <span class="stream-icon type-json">{ }</span
+                    ><span>export.json</span><span class="diff-added">+7</span
+                    ><span class="inspector-close">×</span>
+                  </div>
+                  <div class="inspector-meta">
+                    <span data-i18n="storyExportOptions">归档配置</span
+                    ><span>JSON</span>
+                  </div>
+                  <div class="inspector-code">
+                    <div><i>1</i><code>{</code></div>
+                    <div>
+                      <i>2</i><code> <em>"format"</em>: <b>"html"</b>,</code>
+                    </div>
+                    <div class="code-add">
+                      <i>3</i><code> <em>"media"</em>: <b>true</b>,</code>
+                    </div>
+                    <div class="code-add">
+                      <i>4</i><code> <em>"offline"</em>: <b>true</b>,</code>
+                    </div>
+                    <div>
+                      <i>5</i><code> <em>"theme"</em>: <b>"violet"</b></code>
+                    </div>
+                    <div><i>6</i><code>}</code></div>
+                  </div>
+                  <div class="inspector-status">
+                    <span class="status-dot"></span
+                    ><span data-i18n="storyFormats"
+                      >7 种格式 · 按你需要的方式保存</span
+                    >
+                  </div>
+                </div>
               </div>
             </div>
             <div class="feature-footnote">
@@ -490,40 +665,120 @@
               </p>
             </div>
             <div class="feature-art moments-art" aria-hidden="true">
-              <div class="moment-preview">
-                <div class="moment-author">
-                  <span class="avatar">林</span>
-                  <div><strong>林间</strong><small>2026.11.01</small></div>
-                  <svg class="icon"><use href="#i-grid" /></svg>
+              <div class="moments-story">
+                <div class="collection-browser">
+                  <div class="story-chrome">
+                    <svg class="icon"><use href="#i-grid" /></svg
+                    ><span data-i18n="storyCollection">林间的朋友圈</span
+                    ><span class="chrome-dots">···</span>
+                  </div>
+                  <div class="collection-scroll">
+                    <div class="moment-author">
+                      <span class="avatar">林</span>
+                      <div>
+                        <strong data-i18n="storyLin">林间</strong
+                        ><small>2026.11.01 · 16:30</small>
+                      </div>
+                    </div>
+                    <p data-i18n="momentText">
+                      周末的九个瞬间。把喜欢的风景，好好留下来。
+                    </p>
+                    <div class="landscape-grid">
+                      <img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      /><img
+                        src="assets/weekend.svg"
+                        width="80"
+                        height="80"
+                        alt=""
+                        loading="lazy"
+                      />
+                    </div>
+                    <div class="moment-likes">
+                      <svg class="icon"><use href="#i-heart" /></svg
+                      ><span data-i18n="storyFriends"
+                        >陈一、小满、沈河、阿柚</span
+                      >
+                    </div>
+                  </div>
                 </div>
-                <p data-i18n="momentText">
-                  周末的九个瞬间。把喜欢的风景，好好留下来。
-                </p>
-                <div class="landscape-grid">
-                  <img src="assets/weekend.svg" alt="" loading="lazy" /><img
+                <div class="photo-inspector">
+                  <div class="photo-inspector-top">
+                    <span>IMG_1030</span><span>1 / 9</span>
+                  </div>
+                  <img
                     src="assets/weekend.svg"
+                    width="260"
+                    height="148"
                     alt=""
                     loading="lazy"
-                  /><img src="assets/weekend.svg" alt="" loading="lazy" /><img
-                    src="assets/weekend.svg"
-                    alt=""
-                    loading="lazy"
-                  /><img src="assets/weekend.svg" alt="" loading="lazy" /><img
-                    src="assets/weekend.svg"
-                    alt=""
-                    loading="lazy"
-                  /><img src="assets/weekend.svg" alt="" loading="lazy" /><img
-                    src="assets/weekend.svg"
-                    alt=""
-                    loading="lazy"
-                  /><img src="assets/weekend.svg" alt="" loading="lazy" />
+                  />
+                  <div class="photo-inspector-bottom">
+                    <svg class="icon"><use href="#i-search" /></svg
+                    ><span>100%</span><span class="photo-zoom-value">125%</span
+                    ><svg class="icon"><use href="#i-download" /></svg>
+                  </div>
                 </div>
-                <div class="moment-likes">
-                  <svg class="icon"><use href="#i-heart" /></svg
-                  ><span>陈一、小满、沈河、阿柚</span>
+                <div class="sticker-tray">
+                  <span class="sticker-tray-label" data-i18n="storyFavorites"
+                    >我的收藏</span
+                  ><span class="tray-face">: )</span
+                  ><span class="tray-face">^ · ^</span
+                  ><span class="tray-face">( ˘ ˘ )</span
+                  ><svg class="icon"><use href="#i-smile" /></svg>
                 </div>
+                <span class="demo-cursor photo-cursor"
+                  ><svg viewBox="0 0 20 24">
+                    <path d="M2 2 17 13l-7 1-3 7Z" /></svg
+                  ><i></i
+                ></span>
               </div>
-              <span class="sticker-bubble">: )</span>
             </div>
             <div class="feature-footnote">
               <span class="tiny-dot"></span
@@ -540,26 +795,84 @@
               </p>
             </div>
             <div class="feature-art personal-art">
-              <div class="appearance-preview" id="appearance-preview">
-                <div class="appearance-sidebar">
-                  <img
-                    src="assets/icon.svg"
-                    width="26"
-                    height="26"
-                    alt=""
-                  /><span></span><span class="active"></span><span></span
-                  ><span></span>
-                </div>
-                <div class="appearance-content">
-                  <div class="appearance-title">
-                    <span data-i18n="yourMemories">你的回忆，你的颜色。</span
-                    ><svg class="icon"><use href="#i-sun" /></svg>
+              <div
+                class="appearance-preview"
+                id="appearance-preview"
+                aria-hidden="true"
+              >
+                <div class="appearance-scene scene-dark">
+                  <div class="appearance-sidebar">
+                    <img
+                      src="assets/icon.svg"
+                      width="25"
+                      height="25"
+                      alt=""
+                    /><span></span><span class="active"></span><span></span
+                    ><span></span><svg class="icon"><use href="#i-moon" /></svg>
                   </div>
-                  <div class="appearance-bubble first"></div>
-                  <div class="appearance-bubble second"></div>
-                  <div class="appearance-bubble third"></div>
+                  <div class="appearance-content">
+                    <div class="appearance-title">
+                      <span>Moect / <span data-i18n="sessions">会话</span></span
+                      ><span class="appearance-theme-icon"
+                        ><svg class="icon"><use href="#i-moon" /></svg
+                      ></span>
+                    </div>
+                    <div class="appearance-date">2026 / 10 / 30</div>
+                    <div class="appearance-chat">
+                      <i></i
+                      ><span data-i18n="yourMemories"
+                        >你的回忆，你的颜色。</span
+                      >
+                    </div>
+                    <div class="appearance-chat outgoing">
+                      <span data-i18n="storyKeep">把喜欢的，好好留下。</span
+                      ><i></i>
+                    </div>
+                    <div class="appearance-input">
+                      <span></span
+                      ><svg class="icon"><use href="#i-arrow" /></svg>
+                    </div>
+                  </div>
                 </div>
-                <span class="theme-sweep" aria-hidden="true"></span>
+                <div class="appearance-scene scene-light">
+                  <div class="appearance-sidebar">
+                    <img
+                      src="assets/icon.svg"
+                      width="25"
+                      height="25"
+                      alt=""
+                    /><span></span><span class="active"></span><span></span
+                    ><span></span><svg class="icon"><use href="#i-sun" /></svg>
+                  </div>
+                  <div class="appearance-content">
+                    <div class="appearance-title">
+                      <span>Moect / <span data-i18n="sessions">会话</span></span
+                      ><span class="appearance-theme-icon"
+                        ><svg class="icon"><use href="#i-sun" /></svg
+                      ></span>
+                    </div>
+                    <div class="appearance-date">2026 / 10 / 30</div>
+                    <div class="appearance-chat">
+                      <i></i
+                      ><span data-i18n="yourMemories"
+                        >你的回忆，你的颜色。</span
+                      >
+                    </div>
+                    <div class="appearance-chat outgoing">
+                      <span data-i18n="storyKeep">把喜欢的，好好留下。</span
+                      ><i></i>
+                    </div>
+                    <div class="appearance-input">
+                      <span></span
+                      ><svg class="icon"><use href="#i-arrow" /></svg>
+                    </div>
+                  </div>
+                </div>
+                <span class="demo-cursor theme-cursor"
+                  ><svg viewBox="0 0 20 24">
+                    <path d="M2 2 17 13l-7 1-3 7Z" /></svg
+                  ><i></i
+                ></span>
               </div>
               <div class="accent-picker" role="group" aria-label="预览主题色">
                 <button
