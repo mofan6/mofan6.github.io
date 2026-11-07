@@ -151,25 +151,36 @@ summary:focus-visible,
 
 /* The ambient field fades into the page before the feature section. */
 .site-header {
-  position: absolute;
+  --header-progress: 0;
+  position: fixed;
   inset: 0 0 auto;
   z-index: 30;
-  height: 84px;
+  height: calc(76px - var(--header-progress) * 16px);
+  padding-top: calc(var(--header-progress) * 8px);
 }
-.site-header.is-scrolled {
-  position: fixed;
-  height: 68px;
-  background: #0b0b10dc;
-  border-bottom: 1px solid #ffffff08;
-  backdrop-filter: blur(22px);
-  animation: header-in 0.25s ease-out;
-}
-.header-inner {
+.site-header .header-inner {
+  width: min(calc(1140px - var(--header-progress) * 160px), calc(100% - 64px));
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 30px;
+  padding-inline: calc(var(--header-progress) * 16px);
+  border: 1px solid rgba(255, 255, 255, calc(var(--header-progress) * 0.1));
+  border-radius: calc(var(--header-progress) * 15px);
+  background: rgba(15, 16, 22, calc(var(--header-progress) * 0.82));
+  backdrop-filter: blur(calc(var(--header-progress) * 24px));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, calc(var(--header-progress) * 0.18));
+}
+.site-header .brand {
+  font-size: calc(23px - var(--header-progress) * 2px);
+}
+.site-header .brand img {
+  width: calc(30px - var(--header-progress) * 3px);
+  height: calc(30px - var(--header-progress) * 3px);
+}
+.preview-surface {
+  transform-origin: 50% 50%;
 }
 .brand {
   display: inline-flex;
@@ -1878,13 +1889,24 @@ dialog::backdrop {
     width: calc(100% - 40px);
   }
   .site-header {
-    height: 72px;
+    height: calc(72px - var(--header-progress) * 12px);
   }
-  .site-header.is-scrolled {
-    height: 62px;
-  }
-  .header-inner {
+  .site-header .header-inner {
     gap: 12px;
+    width: calc(100% - 40px - var(--header-progress) * 12px);
+    padding-inline: calc(var(--header-progress) * 9px);
+  }
+  .site-header .brand {
+    font-size: calc(21px - var(--header-progress) * 1px);
+  }
+  .site-header .brand img {
+    width: calc(27px - var(--header-progress) * 2px);
+    height: calc(27px - var(--header-progress) * 2px);
+  }
+  .mobile-nav {
+    width: calc(100% - 40px);
+    margin-inline: auto;
+    border-radius: 14px;
   }
   .brand {
     font-size: 21px;
@@ -2435,17 +2457,35 @@ h1 {
   font-size: 16px;
   line-height: 1.65;
   color: #bbc1ca;
+  max-width: 600px;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+.hero-description > span {
+  display: inline;
+}
+.hero-description br {
+  display: none;
 }
 .hero-actions {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 .system-note {
-  margin-top: 14px;
+  margin-top: 10px;
   font-size: 10px;
   color: #a2aaba;
 }
 .demo-wrap {
-  margin-top: 48px;
+  margin-top: 32px;
+}
+.hero-copy > .demo-jump {
+  margin-top: 10px;
+}
+.hero-copy > .demo-jump .icon {
+  transform: rotate(90deg);
+}
+.hero-copy > .demo-jump:hover .icon {
+  transform: translateY(3px) rotate(90deg);
 }
 .app-window {
   view-transition-name: moect-app;

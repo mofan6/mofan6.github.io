@@ -265,3 +265,82 @@
   );
   updateLabels();
 })();
+
+// Scroll depth drives the compact header, background diffusion and preview tilt.
+(() => {
+  const hero = document.querySelector(".hero");
+  const header = document.querySelector(".site-header");
+  const field = document.querySelector(".hero-atmosphere");
+  const surface = document.querySelector(".preview-surface");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  let heroHeight = hero.offsetHeight;
+  let headerProgress = 0;
+  let heroProgress = 0;
+  let targetHeader = 0;
+  let targetHero = 0;
+  let frame = 0;
+  let previousTime = 0;
+
+  function applyProgress() {
+    header.style.setProperty("--header-progress", headerProgress.toFixed(4));
+    const tiltProgress = Math.min(1, heroProgress / 0.65);
+    surface.style.transform =
+      tiltProgress < 0.0001
+        ? "none"
+        : `perspective(1600px) rotateX(${(5 * tiltProgress).toFixed(4)}deg) scale(${(1 - 0.015 * tiltProgress).toFixed(5)})`;
+    const blur = 20 * Math.min(1, heroProgress / 0.6);
+    field.style.filter = blur < 0.01 ? "none" : `blur(${blur.toFixed(2)}px)`;
+  }
+
+  function animate(timestamp) {
+    frame = 0;
+    const elapsed = previousTime
+      ? Math.min((timestamp - previousTime) / 1000, 0.1)
+      : 1 / 60;
+    previousTime = timestamp;
+    const blend = 1 - Math.exp(-18 * elapsed);
+    headerProgress += (targetHeader - headerProgress) * blend;
+    heroProgress += (targetHero - heroProgress) * blend;
+    if (Math.abs(targetHeader - headerProgress) < 0.0001)
+      headerProgress = targetHeader;
+    if (Math.abs(targetHero - heroProgress) < 0.0001) heroProgress = targetHero;
+    applyProgress();
+    if (headerProgress !== targetHeader || heroProgress !== targetHero) {
+      frame = requestAnimationFrame(animate);
+    } else {
+      previousTime = 0;
+    }
+  }
+
+  function updateTargets() {
+    targetHeader = Math.min(1, Math.max(0, (scrollY - 80) / 160));
+    targetHero = Math.min(1, Math.max(0, scrollY / heroHeight));
+    if (
+      reducedMotion.matches ||
+      document.body.classList.contains("motion-paused") ||
+      document.hidden
+    ) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      previousTime = 0;
+      headerProgress = targetHeader;
+      heroProgress = 0;
+      applyProgress();
+      return;
+    }
+    if (!frame) frame = requestAnimationFrame(animate);
+  }
+
+  addEventListener("scroll", updateTargets, { passive: true });
+  new ResizeObserver(() => {
+    heroHeight = hero.offsetHeight;
+    updateTargets();
+  }).observe(hero);
+  new MutationObserver(updateTargets).observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  reducedMotion.addEventListener("change", updateTargets);
+  document.addEventListener("visibilitychange", updateTargets);
+  updateTargets();
+})();

@@ -25,7 +25,7 @@ const english = {
   navStart: "Get started",
   navOpen: "Open source",
   releaseBadge: "Version 1.2.5 · Open source",
-  heroTitle: "Keep the little things.",
+  heroTitle: "Keep the little things",
   heroDescription1: "From a simple hello to a whole collection of moments.",
   heroDescription2:
     "Keep your conversations, photos, and everyday memories on your own computer.",
@@ -434,14 +434,6 @@ mobileMenuToggle.addEventListener("click", () => {
 mobileNav.addEventListener("click", (event) => {
   if (event.target.closest("a")) closeMobileMenu();
 });
-function updateHeader() {
-  document
-    .querySelector("#site-header")
-    .classList.toggle("is-scrolled", scrollY > 72);
-}
-addEventListener("scroll", updateHeader, { passive: true });
-updateHeader();
-
 function renderSessions() {
   const copy = demoText[state.language];
   panel.innerHTML = `<div class="session-view">
