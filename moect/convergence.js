@@ -1,316 +1,236 @@
 "use strict";
 
-// Light follows curved paths into the app icon. All clocks stop out of view.
+// Scroll assembles a quiet point cloud into Moect's own conversation mark.
 (() => {
   const section = document.querySelector(".closing-section");
   const canvas = section.querySelector(".closing-field");
-  const context = canvas.getContext("2d", { alpha: true });
+  const context = canvas.getContext("2d");
   if (!context) return;
-  const icon = section.querySelector(":scope > img");
+  const symbol = section.querySelector(".closing-symbol");
   const download = section.querySelector(".closing-download");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = matchMedia("(pointer: fine)");
-  const palette = ["190, 163, 255", "226, 207, 255", "255, 208, 172"];
-  const background = document.createElement("canvas");
-  const backgroundContext = background.getContext("2d");
-  let width = 0;
-  let height = 0;
-  let ratio = 1;
-  let focusX = 0;
-  let focusY = 0;
-  let lanes = [];
-  let motes = [];
-  let stars = [];
-  let elapsed = 0;
-  let frame = 0;
-  let lastTime = 0;
-  let lastDraw = 0;
-  let visible = false;
-  let entered = false;
-  let boost = 0;
-  let targetBoost = 0;
-  let pointerX = 0;
-  let pointerY = 0;
-  let targetX = 0;
-  let targetY = 0;
+  const mask = document.createElement("canvas");
+  mask.width = mask.height = 512;
+  const ink = mask.getContext("2d", { willReadFrequently: true });
 
-  const clamp = (value) => Math.max(0, Math.min(1, value));
-  const smooth = (value) => {
-    const t = clamp(value);
+  // Paths from the project's existing icon, with its outer tile removed.
+  ink.fillStyle = "#a18cd6";
+  ink.fill(
+    new Path2D(
+      "M151 109h191c37 0 67 30 67 67v47c0 37-30 67-67 67h-5l11 38-52-38H151c-37 0-67-30-67-67v-47c0-37 30-67 67-67z",
+    ),
+  );
+  ink.fillStyle = "#ded8ed";
+  ink.fill(
+    new Path2D(
+      "M157 204h179c37 0 67 30 67 67v40c0 37-30 67-67 67H213l-52 37 11-37h-15c-37 0-67-30-67-67v-40c0-37 30-67 67-67z",
+    ),
+  );
+  ink.fillStyle = "#98c9bd";
+  ink.beginPath();
+  ink.arc(338, 303, 38, 0, Math.PI * 2);
+  ink.fill();
+  ink.globalCompositeOperation = "destination-out";
+  ink.lineCap = ink.lineJoin = "round";
+  ink.lineWidth = 17;
+  ink.stroke(new Path2D("M158 267h132M158 307h85"));
+  ink.lineWidth = 9;
+  ink.stroke(new Path2D("M338 282v38m-15-14 15 15 15-15"));
+  const image = ink.getImageData(0, 0, 512, 512).data;
+  const glow = document.createElement("canvas");
+  glow.width = glow.height = 32;
+  const glowContext = glow.getContext("2d");
+  const halo = glowContext.createRadialGradient(16, 16, 0, 16, 16, 16);
+  halo.addColorStop(0, "rgba(221, 211, 248, .3)");
+  halo.addColorStop(0.2, "rgba(189, 163, 237, .08)");
+  halo.addColorStop(1, "rgba(189, 163, 237, 0)");
+  glowContext.fillStyle = halo;
+  glowContext.fillRect(0, 0, 32, 32);
+
+  let width = 0,
+    height = 0,
+    centerX = 0,
+    centerY = 0,
+    copyTop = 0;
+  let particles = [],
+    gather = 0,
+    targetGather = 0,
+    elapsed = 0;
+  let frame = 0,
+    lastTime = 0,
+    lastDraw = 0;
+  let visible = false,
+    entered = false;
+  let emphasis = 0,
+    targetEmphasis = 0;
+  let pointerX = -1000,
+    pointerY = -1000,
+    seed = 917;
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const smooth = (v) => {
+    const t = clamp(v);
     return t * t * (3 - 2 * t);
   };
-  let seed = 1739;
   function random() {
     seed = (seed * 1664525 + 1013904223) >>> 0;
     return seed / 4294967296;
   }
-  function pointOnLane(lane, t) {
-    const index = clamp(t) * (lane.points.length - 1);
-    const low = Math.floor(index);
-    const high = Math.min(lane.points.length - 1, low + 1);
-    const mix = index - low;
-    return {
-      x: lane.points[low].x * (1 - mix) + lane.points[high].x * mix,
-      y: lane.points[low].y * (1 - mix) + lane.points[high].y * mix,
-    };
-  }
-  function glow(ctx, x, y, radius, color, alpha, stretch = 1) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(1, stretch);
-    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-    gradient.addColorStop(0, `rgba(${color}, ${alpha})`);
-    gradient.addColorStop(0.25, `rgba(${color}, ${alpha * 0.4})`);
-    gradient.addColorStop(1, `rgba(${color}, 0)`);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(-radius, -radius, radius * 2, radius * 2);
-    ctx.restore();
-  }
 
+  function updateGather() {
+    const bounds = section.getBoundingClientRect();
+    targetGather = clamp(
+      (innerHeight - bounds.top - centerY) / (innerHeight * 0.55),
+    );
+  }
   function resize() {
     width = section.clientWidth;
     height = section.clientHeight;
-    focusX = icon.offsetLeft + icon.offsetWidth / 2;
-    focusY = icon.offsetTop + icon.offsetHeight / 2;
-    ratio = Math.min(
+    centerX = width / 2;
+    centerY = symbol.offsetTop + symbol.offsetHeight / 2;
+    copyTop = section.querySelector("h2").offsetTop;
+    const dpr = Math.min(
       devicePixelRatio || 1,
       1.5,
-      Math.sqrt(1000000 / (width * height)),
+      Math.sqrt(850000 / (width * height)),
     );
-    canvas.width = background.width = Math.round(width * ratio);
-    canvas.height = background.height = Math.round(height * ratio);
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    backgroundContext.setTransform(ratio, 0, 0, ratio, 0, 0);
-    seed = 1739;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
     const small = width < 600;
-    lanes = Array.from({ length: small ? 24 : 44 }, (_, index) => {
-      const side = index % 2 ? 1 : -1;
-      const distance = width * (0.46 + random() * 0.22);
-      const upper = index % 5 === 0;
-      const startY = upper ? -50 - random() * 120 : 170 + random() * 260;
-      const bend = 30 + random() * 110;
-      const p0 = { x: side * distance, y: startY };
-      const p1 = {
-        x: side * distance * 0.72,
-        y: upper ? -180 : 20 + random() * 90,
-      };
-      const p2 = { x: side * (45 + random() * 95), y: -bend };
-      const points = Array.from({ length: 81 }, (_, i) => {
-        const t = i / 80;
-        const u = 1 - t;
-        return {
-          x: 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + u * u * u * p0.x,
-          y: 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + u * u * u * p0.y,
-        };
-      });
-      return {
-        points,
-        color: palette[index % 7 === 0 ? 2 : index % 2],
-        speed: 0.065 + random() * 0.055,
-        phase: random(),
-        delay: random() * 0.95,
-        weight: 0.35 + random() * 0.65,
-      };
-    });
-    motes = Array.from({ length: small ? 100 : 230 }, () => ({
-      lane: Math.floor(random() * lanes.length),
-      phase: random(),
-      size: 0.45 + random() * 1.05,
-      speed: 0.65 + random() * 0.8,
-      depth: 0.35 + random() * 0.65,
-    }));
-    stars = Array.from({ length: small ? 30 : 70 }, () => ({
-      x: random() * width,
-      y: random() * height * 0.75,
-      phase: random() * Math.PI * 2,
-      size: random() * 0.7 + 0.3,
-    }));
-    backgroundContext.clearRect(0, 0, width, height);
-    backgroundContext.globalCompositeOperation = "lighter";
-    glow(
-      backgroundContext,
-      focusX,
-      focusY,
-      Math.min(width * 0.6, 380),
-      palette[0],
-      0.12,
-      0.55,
-    );
-    glow(
-      backgroundContext,
-      focusX + width * 0.22,
-      focusY + 60,
-      width * 0.35,
-      palette[2],
-      0.035,
-      0.6,
-    );
-    backgroundContext.save();
-    backgroundContext.translate(focusX, focusY);
-    lanes.forEach((lane) => {
-      backgroundContext.beginPath();
-      lane.points.forEach((point, i) =>
-        i
-          ? backgroundContext.lineTo(point.x, point.y)
-          : backgroundContext.moveTo(point.x, point.y),
-      );
-      backgroundContext.strokeStyle = `rgba(${lane.color}, ${0.035 * lane.weight})`;
-      backgroundContext.lineWidth = 0.6;
-      backgroundContext.stroke();
-    });
-    backgroundContext.restore();
-    render(reduced.matches ? 6 : elapsed);
+    const scale = (small ? 270 : 340) / 512;
+    const step = small ? 13 : 10;
+    particles = [];
+    seed = 917;
+    for (let y = 100; y < 420; y += step)
+      for (let x = 80; x < 415; x += step) {
+        const sampleX = Math.round(x + (random() - 0.5) * step * 0.85);
+        const sampleY = Math.round(y + (random() - 0.5) * step * 0.85);
+        const index = (sampleY * 512 + sampleX) * 4;
+        if (image[index + 3] < 180) continue;
+        const angle = random() * Math.PI * 2;
+        const vertical = random() * 2 - 1;
+        const radial = Math.sqrt(1 - vertical * vertical);
+        const radius = 0.45 + random() * 0.55;
+        particles.push({
+          tx: (sampleX - 246.5) * scale,
+          ty: (sampleY - 262) * scale,
+          tz: image[index] < 190 ? -9 : 8,
+          sx: Math.cos(angle) * radial * radius * Math.min(width * 0.47, 340),
+          sy: vertical * radius * 180,
+          sz: Math.sin(angle) * radial * radius * 150,
+          phase: random() * Math.PI * 2,
+          size: 1 + random() * 0.8,
+          opacity: 0.55 + random() * 0.4,
+          color: `${image[index]}, ${image[index + 1]}, ${image[index + 2]}`,
+          glimmer: random() > 0.96,
+        });
+      }
+    updateGather();
+    if (needsStillFrame()) drawStillFrame();
+    else render(elapsed, gather);
+    section.dataset.particleField = "ready";
   }
 
-  function streak(lane, head, length, alpha, weight) {
-    if (head <= 0 || head >= 1) return;
-    const tail = Math.max(0, head - length);
-    const start = pointOnLane(lane, tail);
-    const end = pointOnLane(lane, head);
-    const gradient = context.createLinearGradient(
-      start.x,
-      start.y,
-      end.x + 0.001,
-      end.y,
-    );
-    gradient.addColorStop(0, `rgba(${lane.color}, 0)`);
-    gradient.addColorStop(0.7, `rgba(${lane.color}, ${alpha * 0.45})`);
-    gradient.addColorStop(1, `rgba(${lane.color}, ${alpha})`);
-    context.beginPath();
-    for (let i = 0; i <= 15; i++) {
-      const point = pointOnLane(lane, tail + ((head - tail) * i) / 15);
-      i ? context.lineTo(point.x, point.y) : context.moveTo(point.x, point.y);
-    }
-    context.strokeStyle = gradient;
-    context.lineWidth = weight;
-    context.stroke();
-  }
-
-  function render(time) {
+  function render(time, amount) {
     context.clearRect(0, 0, width, height);
-    const intro = smooth(time / 2.8);
-    context.globalCompositeOperation = "source-over";
-    context.globalAlpha = 0.4 + intro * 0.6;
-    context.drawImage(background, 0, 0, width, height);
-    context.globalAlpha = 1;
+    const formed = smooth(amount);
+    const fade = reduced.matches ? 1 : 1 - Math.exp(-time * 1.7);
+    const rotateY = Math.sin(time * 0.16) * 0.09;
+    const rotateZ = Math.sin(time * 0.12) * 0.025;
+    const cy = Math.cos(rotateY),
+      sy = Math.sin(rotateY);
+    const cz = Math.cos(rotateZ),
+      sz = Math.sin(rotateZ);
+    const float = 4 * (1 - formed) + 0.6;
     context.globalCompositeOperation = "lighter";
-    stars.forEach((star) => {
-      context.fillStyle = `rgba(208, 190, 240, ${(0.12 + 0.12 * Math.sin(time * 0.6 + star.phase)) * intro})`;
+    particles.forEach((p) => {
+      const drift = time * 0.035;
+      const sx = p.sx * Math.cos(drift) + p.sz * Math.sin(drift);
+      let x =
+        sx * (1 - formed) +
+        p.tx * formed +
+        Math.sin(time * 0.4 + p.phase) * float;
+      let y =
+        p.sy * (1 - formed) +
+        p.ty * formed +
+        Math.cos(time * 0.35 + p.phase) * float;
+      const z = p.sz * (1 - formed) + p.tz * formed;
+      const rotatedX = x * cy + z * sy;
+      const rotatedZ = z * cy - x * sy;
+      const perspective = 700 / (700 - rotatedZ);
+      x = centerX + (rotatedX * cz - y * sz) * perspective;
+      y =
+        centerY +
+        (rotatedX * sz + y * cz) * perspective +
+        Math.sin(time * 0.3) * 1.5;
+      // Light stays in the symbol's stage, clear of the heading below.
+      const clearance = 1 - smooth((y - copyTop + 28) / 30);
+      const edge = smooth(Math.min(x, width - x) / 35);
+      const shimmer = 0.88 + Math.sin(time * 0.8 + p.phase) * 0.12;
+      const alpha =
+        p.opacity *
+        fade *
+        clearance *
+        edge *
+        shimmer *
+        (0.65 + formed * 0.25 + emphasis * 0.08);
+      if (alpha < 0.01) return;
+      if (finePointer.matches && !reduced.matches) {
+        const dx = x - pointerX,
+          dy = y - pointerY;
+        const distance = Math.hypot(dx, dy);
+        if (distance > 0.1 && distance < 65) {
+          const push = Math.pow(1 - distance / 65, 2) * 8;
+          x += (dx / distance) * push;
+          y += (dy / distance) * push;
+        }
+      }
+      const size = p.size * perspective * (0.9 + formed * 0.2);
+      context.globalAlpha = alpha;
+      context.fillStyle = `rgb(${p.color})`;
       context.beginPath();
-      context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      context.arc(x, y, size * 0.56, 0, Math.PI * 2);
       context.fill();
+      if (p.glimmer) {
+        context.globalAlpha = alpha * 0.42;
+        context.drawImage(glow, x - 6, y - 6, 12, 12);
+      }
     });
-    context.save();
-    context.translate(focusX + pointerX, focusY + pointerY);
-    lanes.forEach((lane) => {
-      const arrival = clamp((time - lane.delay) / 2.7);
-      streak(
-        lane,
-        arrival,
-        0.23,
-        Math.sin(arrival * Math.PI) * 0.7,
-        lane.weight * 1.3,
-      );
-      const head = (time * lane.speed + lane.phase) % 1;
-      streak(
-        lane,
-        head,
-        0.1,
-        (0.2 + boost * 0.2) * intro * Math.sin(head * Math.PI),
-        lane.weight * 0.8,
-      );
-    });
-    motes.forEach((mote) => {
-      const lane = lanes[mote.lane];
-      const t = (time * lane.speed * mote.speed + mote.phase) % 1;
-      const point = pointOnLane(lane, t);
-      const alpha = Math.pow(Math.sin(t * Math.PI), 0.7) * intro * mote.depth;
-      if (alpha < 0.03) return;
-      const behind = pointOnLane(lane, Math.max(0, t - 0.012));
-      context.strokeStyle = `rgba(${lane.color}, ${alpha * 0.3})`;
-      context.lineWidth = mote.size * 0.65;
-      context.beginPath();
-      context.moveTo(behind.x, behind.y);
-      context.lineTo(point.x, point.y);
-      context.stroke();
-      context.fillStyle = `rgba(${lane.color}, ${alpha * 0.8})`;
-      context.beginPath();
-      context.arc(point.x, point.y, mote.size, 0, Math.PI * 2);
-      context.fill();
-      if (mote.size > 1.25)
-        glow(context, point.x, point.y, 6, lane.color, alpha * 0.25);
-    });
-
-    // Thin caustic arcs give the light depth without drawing through the copy.
-    const ringWidth = Math.min(width * 0.28, 156);
-    for (let i = 0; i < 3; i++) {
-      context.save();
-      context.rotate(-0.18 + i * 0.17 + pointerX * 0.002);
-      const radius = ringWidth * (0.72 + i * 0.28);
-      const gradient = context.createLinearGradient(-radius, 0, radius, 0);
-      gradient.addColorStop(0, "rgba(190, 163, 255, 0)");
-      gradient.addColorStop(0.3, `rgba(190, 163, 255, ${intro * 0.16})`);
-      gradient.addColorStop(0.7, `rgba(255, 208, 172, ${intro * 0.33})`);
-      gradient.addColorStop(1, "rgba(255, 208, 172, 0)");
-      context.strokeStyle = gradient;
-      context.lineWidth = i === 1 ? 0.9 : 0.55;
-      context.beginPath();
-      context.ellipse(0, 0, radius, radius * 0.25, 0, 0, Math.PI * 2);
-      context.stroke();
-      context.restore();
-    }
-    const pulse = Math.exp(-Math.pow((time - 3.1) / 0.75, 2));
-    const breath = 0.85 + Math.sin(time * 0.75) * 0.15;
-    glow(
-      context,
-      0,
-      0,
-      125 + pulse * 70,
-      palette[0],
-      intro * (0.13 * breath + boost * 0.08 + pulse * 0.13),
-      0.65,
-    );
-    glow(context, 0, 0, 86, palette[2], intro * (0.12 + boost * 0.08), 0.23);
-    if (pulse > 0.01) {
-      context.strokeStyle = `rgba(223, 204, 255, ${pulse * 0.2})`;
-      context.lineWidth = 0.7;
-      context.beginPath();
-      context.ellipse(
-        0,
-        0,
-        80 + (time - 2.3) * 62,
-        24 + (time - 2.3) * 18,
-        -0.1,
-        0,
-        Math.PI * 2,
-      );
-      context.stroke();
-    }
-    context.restore();
+    context.globalAlpha = 1;
     context.globalCompositeOperation = "source-over";
   }
-
   function canRun() {
     return (
-      visible &&
       entered &&
+      visible &&
       !document.hidden &&
       !reduced.matches &&
       !document.body.classList.contains("motion-paused")
     );
   }
+  function needsStillFrame() {
+    return (
+      reduced.matches ||
+      (elapsed === 0 && document.body.classList.contains("motion-paused"))
+    );
+  }
+  function drawStillFrame() {
+    elapsed = Math.max(elapsed, 6);
+    gather = 1;
+    render(elapsed, gather);
+  }
   function animate(timestamp) {
     frame = 0;
     if (!canRun()) return;
-    const delta = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.08) : 0;
+    const dt = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.08) : 0;
     lastTime = timestamp;
-    elapsed += delta * (1 + boost * 0.25);
-    const blend = 1 - Math.exp(-delta * 4);
-    boost += (targetBoost - boost) * blend;
-    pointerX += (targetX - pointerX) * blend;
-    pointerY += (targetY - pointerY) * blend;
-    if (timestamp - lastDraw > 1000 / (width < 600 ? 24 : 30)) {
-      render(elapsed);
+    elapsed += dt;
+    const blend = 1 - Math.exp(-dt * 3);
+    gather += (targetGather - gather) * blend;
+    emphasis += (targetEmphasis - emphasis) * blend;
+    if (timestamp - lastDraw >= 1000 / (width < 600 ? 24 : 30)) {
+      render(elapsed, gather);
       lastDraw = timestamp;
     }
     frame = requestAnimationFrame(animate);
@@ -319,22 +239,24 @@
     cancelAnimationFrame(frame);
     frame = 0;
     lastTime = 0;
-    if (reduced.matches) render(6);
+    if (needsStillFrame()) drawStillFrame();
     if (canRun()) frame = requestAnimationFrame(animate);
   }
   new ResizeObserver(resize).observe(section);
   new IntersectionObserver(
     ([entry]) => {
       visible = entry.isIntersecting;
-      if (entry.intersectionRatio >= 0.35) entered = true;
+      if (entry.intersectionRatio >= 0.28) entered = true;
+      updateGather();
       syncPlayback();
     },
-    { threshold: [0, 0.35] },
+    { threshold: [0, 0.28] },
   ).observe(section);
   new MutationObserver(syncPlayback).observe(document.body, {
     attributes: true,
     attributeFilter: ["class"],
   });
+  addEventListener("scroll", updateGather, { passive: true });
   reduced.addEventListener("change", syncPlayback);
   document.addEventListener("visibilitychange", syncPlayback);
   section.addEventListener(
@@ -342,25 +264,25 @@
     (event) => {
       if (!finePointer.matches || reduced.matches) return;
       const bounds = section.getBoundingClientRect();
-      targetX = ((event.clientX - bounds.left) / width - 0.5) * 12;
-      targetY = ((event.clientY - bounds.top) / height - 0.5) * 8;
+      pointerX = event.clientX - bounds.left;
+      pointerY = event.clientY - bounds.top;
     },
     { passive: true },
   );
   section.addEventListener("pointerleave", () => {
-    targetX = targetY = 0;
+    pointerX = pointerY = -1000;
   });
   download.addEventListener("pointerenter", () => {
-    targetBoost = 1;
+    targetEmphasis = 1;
   });
   download.addEventListener("pointerleave", () => {
-    targetBoost = 0;
+    targetEmphasis = 0;
   });
   download.addEventListener("focus", () => {
-    targetBoost = 1;
+    targetEmphasis = 1;
   });
   download.addEventListener("blur", () => {
-    targetBoost = 0;
+    targetEmphasis = 0;
   });
   resize();
 })();

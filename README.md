@@ -17,7 +17,7 @@ Moect 的项目展示、交互演示与下载网站，由 MOFAN 维护。
 - 按钮原点的 1080ms 圆形主题揭示，支持每张功能卡片独立暂停。
 - 首屏标题、下载按钮与试用入口居中对齐；随滚动收缩的毛玻璃顶栏、背景高斯模糊与应用预览透视上倾，返回顶部恢复。
 - Moect 雾紫与暖杏色动态云雾，轻透的带高光玻璃顶栏。
-- 底部下载区域的弧线光流与粒子汇聚、抵达光晕、指针微视差及下载按钮聚光反馈。离开视口停止绘制，全局暂停冻结画面，减少动态效果时保留静态构图。
+- 底部散点随滚动聚成 Moect 对话气泡点阵，支持反向散开、缓慢立体浮动与局部指针扰动。离开视口停止绘制，全局暂停冻结画面，减少动态效果时保留静态构图。
 
 产品功能和系统要求依据 Moect 1.2.5 的 README 与发行说明。网站演示中的账号、消息、风景和收藏内容均为虚构数据。
 
@@ -40,7 +40,7 @@ python -m http.server 8787
 | `moect/styles.css`     | 响应式布局、背景、组件与动效                   |
 | `moect/app.js`         | 英文文案、演示数据、交互和偏好                 |
 | `moect/visuals.js`     | 实时流体背景、滚动联动、视口播放管理与卡片暂停 |
-| `moect/convergence.js` | 底部光线与粒子汇聚、视口播放及暂停管理         |
+| `moect/convergence.js` | 底部点阵标志、滚动聚合、视口播放与暂停管理     |
 | `moect/assets/`        | Moect 图标、虚构插画和软件宣传截图             |
 
 GitHub Pages 从 `main` 分支的根目录发布，推送后自动部署。`.nojekyll` 用于按静态文件提供网站。
@@ -50,6 +50,8 @@ GitHub Pages 从 `main` 分支的根目录发布，推送后自动部署。`.noj
 ## 视觉与素材
 
 页面布局、深色云雾背景、分体下载控件和功能演示节奏参考了 DeepSeek Harness。Moect 的网站代码与演示组件独立实现。[设计参考](https://www.deepseek.com/harness/)
+
+底部点阵动画依据参考站 `CtaDigitileR3F` 的模块结构及其[公开移植实现](https://github.com/ProjectArkClub/ProjectArkClub.github.io/blob/a5cafb74297ef7da27aadc63a82d193d5ebfb13c/assets/js/cta-scene.js)研究滚动聚合方式，绘图代码独立实现，点阵轮廓取自 Moect 自有图标。本次参考站原始动态分块返回空响应，未能直接运行其原始 3D 动画。
 
 Moect 图标、宣传截图与支持二维码来自 Moect 项目。山间日落插画沿用项目公开演示素材的绘制方式。西文字体自托管 DM Sans，中文使用系统字体。DM Sans 的 SIL Open Font License 随素材提供。[项目素材与致谢](https://github.com/mofan6/Moect#致谢) · [字体许可](moect/assets/DM-Sans-LICENSE.txt)
 

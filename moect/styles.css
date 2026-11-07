@@ -1558,7 +1558,7 @@ h3 {
   position: relative;
   isolation: isolate;
   margin-top: 146px;
-  padding: 132px 20px 96px;
+  padding: 52px 20px 92px;
   text-align: center;
   overflow: hidden;
   border-top: 1px solid #b29ac214;
@@ -1566,12 +1566,12 @@ h3 {
 .closing-glow {
   position: absolute;
   z-index: -1;
-  width: 900px;
-  height: 460px;
-  top: -65px;
+  width: min(650px, 100%);
+  height: 310px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse, #8b67bf20, transparent 65%);
+  background: radial-gradient(ellipse, #8b67bf0b, transparent 68%);
 }
 .closing-field {
   position: absolute;
@@ -1585,12 +1585,19 @@ h3 {
 .closing-section > :not(.closing-field):not(.closing-glow) {
   position: relative;
 }
-.closing-section > img {
-  margin-bottom: 24px;
+.closing-symbol {
+  height: 200px;
+  margin-bottom: 20px;
+}
+.closing-symbol img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 16px;
-  box-shadow:
-    0 0 45px #b28ee64a,
-    0 0 100px #b28ee620;
+}
+.closing-section[data-particle-field="ready"] .closing-symbol img {
+  opacity: 0;
 }
 .closing-section h2 {
   font-size: 30px;
@@ -2326,7 +2333,7 @@ dialog::backdrop {
   }
   .closing-section {
     margin-top: 95px;
-    padding: 112px 5px 76px;
+    padding: 48px 5px 76px;
   }
   .closing-section h2 {
     font-size: 25px;
@@ -2334,7 +2341,10 @@ dialog::backdrop {
   .closing-section p {
     font-size: 11px;
   }
-  .closing-section > img {
+  .closing-symbol {
+    height: 164px;
+  }
+  .closing-symbol img {
     width: 49px;
     height: 49px;
   }
