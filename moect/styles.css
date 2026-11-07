@@ -290,6 +290,16 @@ summary:focus-visible,
 .field-ready #fluid-field {
   opacity: 1;
 }
+.hero-particles {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 620px;
+  z-index: 0;
+  opacity: 0.32;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, #000 9%, #000 85%, transparent);
+}
 .hero-copy {
   text-align: center;
   position: relative;
