@@ -24,14 +24,14 @@ const english = {
   navFeatures: "Features",
   navStart: "Get started",
   navOpen: "Open source",
-  releaseBadge: "Version 1.2.6 · Open source",
+  releaseBadge: "Version 1.2.7 · Open source",
   heroTitle: "Keep the little things",
   heroDescription1: "From a simple hello to a whole collection of moments.",
   heroDescription2:
     "Keep your conversations, photos, and everyday memories on your own computer.",
   downloadWindows: "Download for Windows",
   installer: "Windows installer",
-  installerDetail: "1.2.6 · x64 · 62.9 MB",
+  installerDetail: "1.2.7 · x64 · 62.9 MB",
   portable: "Windows portable",
   portableDetail: "Extract the complete folder · 74.8 MB",
   checksums: "View SHA-256 checksums",
@@ -104,9 +104,9 @@ const english = {
   sourceDescription:
     "Clone the project and follow the build guide to set up your development environment.",
   buildGuide: "Build guide",
-  releaseTitle: "What’s new in version 1.2.6",
+  releaseTitle: "What’s new in version 1.2.7",
   releaseDescription:
-    "More reliable WeChat connections, working image retries, and improved original and thumbnail discovery.",
+    "Background image recovery, broader local cache lookup, chat sticker reuse, and clearer Moments media diagnostics.",
   releaseLink: "What’s new in this release",
   releaseDate: "Released November 7, 2026",
   viewGithub: "View on GitHub",
