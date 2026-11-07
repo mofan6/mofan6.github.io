@@ -1,0 +1,52 @@
+# Moect website
+
+Moect 的项目展示、交互演示与下载网站，由 MOFAN 维护。
+
+[访问网站](https://mofan6.github.io/) · [Moect 项目](https://github.com/mofan6/Moect) · [下载发行版](https://github.com/mofan6/Moect/releases/latest)
+
+## 内容与交互
+
+- 中文与英文切换，保存语言偏好。
+- 会话搜索、会话切换、朋友圈与表情包演示。
+- 使用虚构消息生成可离线阅读的独立 HTML 示例文件。
+- 演示界面深浅色切换、八种主题色预览。
+- Windows 安装版、便携版及 SHA-256 校验入口。
+- 软件真实宣传截图、FAQ、源码与构建指南。
+- 键盘操作、手机布局、减少动态效果与动画暂停。
+
+产品功能和系统要求依据 Moect 1.2.5 的 README 与发行说明。网站演示中的账号、消息、风景和收藏内容均为虚构数据。
+
+## 本地运行
+
+这是由 HTML、CSS 和 JavaScript 组成的静态网站。
+
+```sh
+python -m http.server 8787
+```
+
+然后在浏览器打开 `http://localhost:8787/`。
+
+## 修改与部署
+
+| 文件         | 用途                                 |
+| ------------ | ------------------------------------ |
+| `index.html` | 页面结构、中文文案、下载链接和元信息 |
+| `styles.css` | 响应式布局、背景、组件与动效         |
+| `app.js`     | 英文文案、演示数据、交互和偏好       |
+| `assets/`    | Moect 图标、虚构插画和软件宣传截图   |
+
+GitHub Pages 从 `main` 分支的根目录发布，推送后自动部署。`.nojekyll` 用于按静态文件提供网站。
+
+发布新软件版本时，更新 `index.html` 中的版本、下载链接和文件大小，同时更新 `app.js` 的英文发行信息。用户文档与项目源码链接指向 Moect 仓库。
+
+## 视觉与素材
+
+页面布局、深色云雾背景、分体下载控件和功能演示节奏参考了 DeepSeek Harness。Moect 的网站代码与演示组件独立实现。[设计参考](https://www.deepseek.com/harness/)
+
+Moect 图标、宣传截图与支持二维码来自 Moect 项目。山间日落插画沿用项目公开演示素材的绘制方式。页面采用系统字体，素材在本仓库提供。[项目素材与致谢](https://github.com/mofan6/Moect#致谢)
+
+本次制作使用 Chrome DevTools 分析样式与布局，使用 Playwright 观察和验证交互，并使用 Screenshot-to-Code 的截图提示构建与本地桌面、手机渲染。Screenshot-to-Code 的模型生成需要另行配置服务商 API Key。
+
+## 许可证
+
+网站源码采用 GPL-3.0，详见 [LICENSE](LICENSE)。Moect 软件与相关依赖的原有版权和许可说明见其项目仓库。
