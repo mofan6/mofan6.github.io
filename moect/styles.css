@@ -2649,7 +2649,8 @@ h1 {
   animation: hero-resolve 0.8s 0.15s ease-out backwards;
 }
 .hero-actions,
-.system-note {
+.system-note,
+.hero-copy > .demo-jump {
   animation: hero-resolve 0.7s 0.3s ease-out backwards;
 }
 .demo-wrap {
