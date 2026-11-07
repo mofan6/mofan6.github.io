@@ -30,9 +30,10 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.css?v=20261107-4" />
-    <script src="app.js?v=20261107-4" defer></script>
-    <script src="visuals.js?v=20261107-4" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261107-5" />
+    <script src="app.js?v=20261107-5" defer></script>
+    <script src="visuals.js?v=20261107-5" defer></script>
+    <script src="convergence.js?v=20261107-5" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">跳至主要内容</a>
@@ -1212,10 +1213,17 @@
         </div>
       </section>
 
-      <section class="closing-section container reveal">
+      <section
+        class="closing-section container reveal"
+        id="download"
+        aria-labelledby="closing-title"
+      >
         <div class="closing-glow" aria-hidden="true"></div>
+        <canvas class="closing-field" aria-hidden="true"></canvas>
         <img src="assets/icon.svg" width="55" height="55" alt="" />
-        <h2 data-i18n="closingTitle">给回忆，一个自己的家。</h2>
+        <h2 id="closing-title" data-i18n="closingTitle">
+          给回忆，一个自己的家。
+        </h2>
         <p data-i18n="closingDescription">
           从今天开始，把值得留下的，好好留下来。
         </p>
