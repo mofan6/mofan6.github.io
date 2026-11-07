@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://mofan6.github.io/sitemap.xml
+Sitemap: https://mofan6.github.io/moect/sitemap.xml

@@ -72,14 +72,15 @@
       ) - 0.44;
       float density = cloudNoise(point * 0.87 + current * 2.4 + fold * 2.0);
       float ribbon = cloudNoise(point * 0.64 + fold * 3.1 + vec2(-drift * 0.2, 4.2));
-      float blue = smoothstep(0.20, 0.69, density);
-      float silver = smoothstep(0.36, 0.76, ribbon + density * 0.19);
+      float violet = smoothstep(0.20, 0.69, density);
+      float pearl = smoothstep(0.36, 0.76, ribbon + density * 0.19);
 
-      vec3 color = mix(vec3(0.018, 0.027, 0.045), vec3(0.115, 0.26, 0.45), blue);
-      color = mix(color, vec3(0.66, 0.67, 0.69), silver * 0.71);
+      // Moect's lavender with warm apricot light, like a fading evening sky.
+      vec3 color = mix(vec3(0.035, 0.024, 0.055), vec3(0.32, 0.22, 0.46), violet);
+      color = mix(color, vec3(0.72, 0.60, 0.68), pearl * 0.65);
       color *= 0.70 + 0.30 * smoothstep(0.2, 0.7, density);
-      float light = exp(-length((uv - vec2(0.87, 0.8)) * vec2(aspect, 1.0)) * 2.4);
-      color += vec3(0.09, 0.085, 0.10) * light;
+      float light = exp(-length((uv - vec2(0.80, 0.82)) * vec2(aspect, 1.0)) * 2.8);
+      color += vec3(0.24, 0.135, 0.055) * light;
       float vignette = smoothstep(0.3, 0.95, length(uv - 0.5));
       color *= 1.0 - vignette * 0.30;
       color += (randomValue(gl_FragCoord.xy) - 0.5) * 0.006;
