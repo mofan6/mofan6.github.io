@@ -539,6 +539,7 @@ h1 > span {
   --demo-selected: #8970ca1a;
   --demo-accent: #72509e;
   color-scheme: light;
+  background: var(--demo-bg);
 }
 .app-titlebar {
   height: 42px;
