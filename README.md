@@ -10,7 +10,7 @@ Moect 的项目展示、交互演示与下载网站，由 MOFAN 维护。
 - 会话搜索、会话切换、朋友圈与表情包演示。
 - 使用虚构消息生成可离线阅读的独立 HTML 示例文件。
 - 演示界面深浅色切换、八种主题色预览。
-- Windows 安装版、便携版及 SHA-256 校验入口。
+- Windows 安装版与便携版下载入口。
 - 软件真实宣传截图、FAQ、源码与构建指南。
 - 键盘操作、手机布局、减少动态效果与动画暂停。
 - 实时 WebGL 流体云雾、错峰模糊入场、按视口暂停的四组功能演示时间线。
@@ -19,7 +19,7 @@ Moect 的项目展示、交互演示与下载网站，由 MOFAN 维护。
 - Moect 雾紫与暖杏色动态云雾，轻透的带高光玻璃顶栏。
 - 底部散点随滚动聚成 Moect 对话气泡点阵，支持反向散开、缓慢立体浮动与局部指针扰动。离开视口停止绘制，全局暂停冻结画面，减少动态效果时保留静态构图。
 
-产品功能和系统要求依据 Moect 1.2.8 的 README 与发行说明。网站演示中的账号、消息、风景和收藏内容均为虚构数据。
+产品功能和系统要求依据 Moect 1.3.0 的 README 与发行说明。网站演示中的账号、消息、风景和收藏内容均为虚构数据。
 
 ## 本地运行
 
@@ -53,7 +53,7 @@ GitHub Pages 从 `main` 分支的根目录发布，推送后自动部署。`.noj
 
 底部点阵动画依据参考站 `CtaDigitileR3F` 的模块结构及其[公开移植实现](https://github.com/ProjectArkClub/ProjectArkClub.github.io/blob/a5cafb74297ef7da27aadc63a82d193d5ebfb13c/assets/js/cta-scene.js)研究滚动聚合方式，绘图代码独立实现，点阵轮廓取自 Moect 自有图标。本次参考站原始动态分块返回空响应，未能直接运行其原始 3D 动画。
 
-Moect 图标、宣传截图与支持二维码来自 Moect 项目。山间日落插画沿用项目公开演示素材的绘制方式。西文字体自托管 DM Sans，中文使用系统字体。DM Sans 的 SIL Open Font License 随素材提供。[项目素材与致谢](https://github.com/mofan6/Moect#致谢) · [字体许可](moect/assets/DM-Sans-LICENSE.txt)
+Moect 图标、宣传截图与支持二维码来自 Moect 项目。山间日落插画沿用项目公开演示素材的绘制方式。西文字体自托管 DM Sans，中文使用系统字体。DM Sans 的 SIL Open Font License 随素材提供。[第三方许可](https://github.com/mofan6/Moect/blob/main/THIRD_PARTY_NOTICES.md) · [字体许可](moect/assets/DM-Sans-LICENSE.txt)
 
 本次制作使用 Chrome DevTools 分析样式与布局，使用 Playwright 观察和验证交互，并使用 Screenshot-to-Code 的截图提示构建与本地桌面、手机渲染。Screenshot-to-Code 的模型生成需要另行配置服务商 API Key。
 

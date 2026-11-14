@@ -460,13 +460,6 @@ h1 > span {
   color: #9c96a9;
   margin-top: 3px;
 }
-.download-menu .checksum-link {
-  border-top: 1px solid var(--border);
-  font-size: 10px;
-  justify-content: center;
-  margin-top: 3px;
-  color: #b1a6c5;
-}
 .text-link {
   display: inline-flex;
   align-items: center;
